@@ -5,7 +5,6 @@ import 'package:food_app/constants.dart';
 import 'package:food_app/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -17,15 +16,17 @@ class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? _email, _password; //local variable
 
-  void signin() async {
+  void signin(BuildContext context) async {
     await Firebase.initializeApp();
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email!, password: _password!)
         .catchError((onError) {
       print(onError);
     }).then((authUser) {
-      print(authUser.user?.uid);
-      
+      if (authUser.user != null) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      }
     });
   }
 
@@ -188,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
-                        signin();
+                        signin(context);
                         print(_email);
                         print(_password);
                         // if (_email == 'swaminathan.it20@bitsathy.ac.in' &&
