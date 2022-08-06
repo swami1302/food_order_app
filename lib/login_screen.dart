@@ -1,7 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_app/colors.dart';
 import 'package:food_app/constants.dart';
 import 'package:food_app/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,6 +17,18 @@ class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? _email, _password; //local variable
 
+  void signin() async {
+    await Firebase.initializeApp();
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: _email!, password: _password!)
+        .catchError((onError) {
+      print(onError);
+    }).then((authUser) {
+      print(authUser.user?.uid);
+      
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -22,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: GestureDetector(
-        onTap: ()=>FocusScope.of(context).unfocus(),
+        onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -84,8 +99,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                     child: Text(
                       ' $LoginString ',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22.0),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 22.0),
                     ),
                     decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -123,7 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: primarycolor,
                         ),
                         labelText: "EMAIL ADDRESS",
-                        labelStyle: TextStyle(color: primarycolor, fontSize: 16)),
+                        labelStyle:
+                            TextStyle(color: primarycolor, fontSize: 16)),
                   ),
                 ),
                 Padding(
@@ -150,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: primarycolor,
                         ),
                         labelText: "PASSWORD",
-                        labelStyle: TextStyle(color: primarycolor, fontSize: 16)),
+                        labelStyle:
+                            TextStyle(color: primarycolor, fontSize: 16)),
                   ),
                 ),
                 Align(
@@ -170,18 +187,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        (formKey.currentState!.save());
-                        /*print(_email);
-                        print(_password);*/
-                        if (_email == 'swaminathan.it20@bitsathy.ac.in' &&
-                            _password == "12345678") {
-                              FocusScope.of(context).unfocus();
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen(),
-                              ),
-                              );
-                        } else {
-                          print("invalid entry");
-                        }
+                        formKey.currentState!.save();
+                        signin();
+                        print(_email);
+                        print(_password);
+                        // if (_email == 'swaminathan.it20@bitsathy.ac.in' &&
+                        //     _password == "12345678") {
+                        //   FocusScope.of(context).unfocus();
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => HomeScreen(),
+                        //     ),
+                        //   );
+                        // } else {
+                        //   print("invalid entry");
+                        // }
                       }
                     },
                     child: Text(
